@@ -15,19 +15,19 @@ import DailyReportForm from './RaportOnSite.jsx'
  * Singura pagină a utilizatorilor non-admin: rapoartele on-site proprii.
  *
  * Coloanele urmăresc exact corpul cererii POST din siteReportsController
- * (parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss,
+ * (parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss, toolBox,
  * mentenantaCorectiva, mentenantaPreventiva).
  */
 
 /**
  * Aceeași definiție de grilă pentru antet și pentru rânduri, ca să rămână
  * aliniate. Sub lățimea minimă tabelul derulează orizontal în loc să se rearanjeze —
- * cele nouă coloane numerice devin ilizibile dacă se înghesuie.
+ * cele șapte coloane numerice devin ilizibile dacă se înghesuie.
  */
 const GRID = {
   display: 'grid',
   gridTemplateColumns:
-    '96px minmax(160px, 1.2fr) minmax(170px, 1.2fr) 96px 96px 88px 96px 120px 120px 160px',
+    '96px minmax(160px, 1.2fr) minmax(170px, 1.2fr) 96px 96px 88px 96px 96px 120px 120px 160px',
   gap: '16px',
   width: '100%',
 }
@@ -54,6 +54,7 @@ const COLUMNS = [
   { label: 'Inducție', align: 'text-right' },
   { label: 'Mediu', align: 'text-right' },
   { label: 'Near miss', align: 'text-right' },
+  { label: 'Toolbox', align: 'text-right' },
   { label: 'Ment. corectivă', align: 'text-right' },
   { label: 'Ment. preventivă', align: 'text-right' },
   { label: '' },
@@ -86,8 +87,8 @@ function ReportRowSkeleton({ index = 0 }) {
         <Skeleton className="h-[9px] w-[52px]" />
       </span>
 
-      {/* Cele șase coloane numerice, aliniate la dreapta ca valorile reale. */}
-      {Array.from({ length: 6 }, (_, i) => (
+      {/* Cele șapte coloane numerice, aliniate la dreapta ca valorile reale. */}
+      {Array.from({ length: 7 }, (_, i) => (
         <Skeleton key={i} className="ml-auto h-[11px] w-[32px]" />
       ))}
 
@@ -105,7 +106,7 @@ function ReportCardSkeleton() {
       </div>
       <Skeleton className="mt-[6px] h-[10px] w-[70%]" />
       <div className="mt-3 grid grid-cols-3 gap-x-3 gap-y-2">
-        {Array.from({ length: 6 }, (_, i) => (
+        {Array.from({ length: 7 }, (_, i) => (
           <Skeleton key={i} className="h-[10px] w-[70%]" />
         ))}
       </div>
@@ -125,6 +126,7 @@ function ReportCard({ report, onEdit, onDelete }) {
     { label: 'Inducție', value: report.inductie_ore },
     { label: 'Mediu', value: report.mediu_ore },
     { label: 'Near miss', value: report.near_miss, danger: report.near_miss > 0 },
+    { label: 'Toolbox', value: report.toolbox },
     { label: 'Ment. corectivă', value: report.mentenanta_corectiva },
     { label: 'Ment. preventivă', value: report.mentenanta_preventiva },
   ]
@@ -558,6 +560,12 @@ export default function SiteReportsPage() {
                           }`}
                         >
                           {formatNumar(report.near_miss)}
+                        </span>
+
+                        <span
+                          className="text-right font-mono text-cta text-ink-700"
+                        >
+                          {formatNumar(report.toolbox)}
                         </span>
 
                         <span className="text-right font-mono text-cta text-ink-700">

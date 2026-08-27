@@ -28,7 +28,7 @@ import SegmentedControl from '../components/ui/SegmentedControl.jsx'
 const GRID = {
   display: 'grid',
   gridTemplateColumns:
-    '96px minmax(140px, 1fr) minmax(160px, 1.2fr) minmax(170px, 1.2fr) 96px 96px 88px 120px 120px',
+    '96px minmax(160px, 1.2fr) minmax(170px, 1.2fr) 96px 96px 88px 96px 96px 120px 120px',
   gap: '16px',
   width: '100%',
 }
@@ -55,6 +55,7 @@ const COLUMNS = [
   { label: 'Inducție', align: 'text-right' },
   { label: 'Mediu', align: 'text-right' },
   { label: 'Near miss', align: 'text-right' },
+  { label: 'Toolbox', align: 'text-right' },
   { label: 'Ment. corectivă', align: 'text-right' },
   { label: 'Ment. preventivă', align: 'text-right' },
 ]
@@ -366,6 +367,7 @@ export default function AdminSiteReportsPage() {
                     <span className={`text-right font-mono text-cta ${report.near_miss > 0 ? 'font-bold text-danger' : 'text-ink-700'}`}>
                       {formatNumar(report.near_miss)}
                     </span>
+                    <span className="text-right font-mono text-cta text-ink-700">{formatNumar(report.toolbox)}</span>
                     <span className="text-right font-mono text-cta text-ink-700">{formatNumar(report.mentenanta_corectiva)}</span>
                     <span className="text-right font-mono text-cta text-ink-700">{formatNumar(report.mentenanta_preventiva)}</span>
                   </motion.div>

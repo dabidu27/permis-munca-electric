@@ -10,6 +10,7 @@ const FIELDS = [
   "inductieOre", 
   "mediuOre", 
   "nearMiss",
+  "toolBox",
   "mentenantaCorectiva",
   "mentenantaPreventiva"
 ];
@@ -51,6 +52,7 @@ export default function DailyReportForm({
         inductieOre: initialData.inductie_ore || 0,
         mediuOre: initialData.mediu_ore || 0,
         nearMiss: initialData.near_miss || 0,
+        toolBox: initialData.toolbox || 0,
         mentenantaCorectiva: initialData.mentenanta_corectiva || 0,
         mentenantaPreventiva: initialData.mentenanta_preventiva || 0,
       })
@@ -143,6 +145,7 @@ export default function DailyReportForm({
       "inductieOre",
       "mediuOre",
       "nearMiss",
+      "toolBox",
       "mentenantaCorectiva",
       "mentenantaPreventiva",
     ];
@@ -169,6 +172,11 @@ export default function DailyReportForm({
         return;
       }
 
+      if (key === "toolBox" && !Number.isInteger(numValue)) {
+        flash(`Câmpul toolbox reprezintă evenimente și trebuie să fie un număr întreg.`)
+        return;
+      }
+
       parsedNumbers[key] = numValue;
     }
 
@@ -185,6 +193,7 @@ export default function DailyReportForm({
         inductieOre: parsedNumbers.inductieOre,
         mediuOre: parsedNumbers.mediuOre,
         nearMiss: parsedNumbers.nearMiss,
+        toolBox: parsedNumbers.toolBox,
         mentenantaCorectiva: parsedNumbers.mentenantaCorectiva,
         mentenantaPreventiva: parsedNumbers.mentenantaPreventiva
       }
@@ -857,6 +866,50 @@ export default function DailyReportForm({
                 placeholder="număr, ex. 0"
                 value={vals.nearMiss ?? ""}
                 onChange={(e) => handleFieldChange("nearMiss", e.target.value)}
+                style={{
+                  boxSizing: "border-box",
+                  width: "100%",
+                  border: "1px solid #d2d7dd",
+                  background: "#eef3fb",
+                  height: h,
+                  padding: "0 12px",
+                  fontSize: "14px",
+                  color: "#1b1e21",
+                  outline: 0,
+                }}
+              />
+            </label>
+
+            {/* Toolbox */}
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "7px",
+                minWidth: 0,
+              }}
+            >
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: "5px",
+                  fontSize: "10.5px",
+                  fontWeight: 700,
+                  letterSpacing: "0.13em",
+                  textTransform: "uppercase",
+                  color: "#6b7480",
+                }}
+              >
+                Toolbox<span style={{ color: accent }}>{req}</span>
+              </span>
+              <input
+                type="text"
+                className="esg-input"
+                inputMode="numeric"
+                placeholder="număr, ex. 0"
+                value={vals.toolBox ?? ""}
+                onChange={(e) => handleFieldChange("toolBox", e.target.value)}
                 style={{
                   boxSizing: "border-box",
                   width: "100%",

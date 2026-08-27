@@ -11,6 +11,7 @@ interface DailyReport{
     inductieOre: number,
     mediuOre: number,
     nearMiss: number,
+    toolBox: number
     mentenantaCorectiva: number,
     mentenantaPreventiva: number
 
@@ -39,6 +40,9 @@ function isValidReport(body: any): body is DailyReport {
   if (typeof body.nearMiss !== 'number' || !Number.isInteger(body.nearMiss) || body.nearMiss < 0)
     return false;
 
+  if (typeof body.toolBox !== 'number' || !Number.isInteger(body.toolBox) || body.toolBox < 0)
+    return false;
+
   return true;
 }
 
@@ -49,7 +53,7 @@ export const uploadReport = async(req: Request, res: Response) => {
         return res.status(400).json({ error: 'Toate campurile sunt obligatorii si neaparat valide' });
     }
 
-    const {parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss, mentenantaCorectiva, mentenantaPreventiva} = req.body as DailyReport;
+    const {parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss, toolBox, mentenantaCorectiva, mentenantaPreventiva} = req.body as DailyReport;
 
     const {error: reportError} = await supabase.from('site_reports').insert({
         'user_id': userId,
@@ -60,6 +64,7 @@ export const uploadReport = async(req: Request, res: Response) => {
         'mediu_ore': mediuOre,
         'inductie_ore': inductieOre,
         'near_miss': nearMiss,
+        'toolbox': toolBox,
         'mentenanta_corectiva': mentenantaCorectiva,
         'mentenanta_preventiva': mentenantaPreventiva
     })
@@ -131,7 +136,7 @@ export const editReport = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Toate campurile sunt obligatorii si neaparat valide' });
     }
 
-    const {parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss, mentenantaCorectiva, mentenantaPreventiva} = req.body as DailyReport;
+    const {parc, echipa, data, oreLucrate, inductieOre, mediuOre, nearMiss, toolBox, mentenantaCorectiva, mentenantaPreventiva} = req.body as DailyReport;
 
 
     const{error: updateError} = await supabase.from('site_reports').update({
@@ -142,6 +147,7 @@ export const editReport = async (req: Request, res: Response) => {
         'mediu_ore': mediuOre,
         'inductie_ore': inductieOre,
         'near_miss': nearMiss,
+        'toolbox': toolBox,
         'mentenanta_corectiva': mentenantaCorectiva,
         'mentenanta_preventiva': mentenantaPreventiva
     }).eq('id', reportId).eq('user_id', userId);
@@ -187,6 +193,7 @@ interface Report{
     inductie_ore: number,
     mediu_ore: number,
     near_miss: number,
+    toolbox: number,
     mentenanta_corectiva: number,
     mentenanta_preventiva: number
 }
@@ -199,7 +206,7 @@ export const downloadReports = async (req: Request, res: Response) => {
         const year = req.query.an as string;
         const parc = req.query.parc as string;
         
-        let query = supabase.from('site_reports').select('data, parc, echipa, ore_lucrate, inductie_ore, mediu_ore, near_miss, mentenanta_corectiva, mentenanta_preventiva').order('data', {ascending: false});
+        let query = supabase.from('site_reports').select('data, parc, echipa, ore_lucrate, inductie_ore, mediu_ore, near_miss, toolbox, mentenanta_corectiva, mentenanta_preventiva').order('data', {ascending: false});
         const{data: reports, error} = await query
 
         if(error){
@@ -243,6 +250,7 @@ export const downloadReports = async (req: Request, res: Response) => {
                 { header: 'Inducție', key: 'inductie_ore', width: 15 },
                 { header: 'Mediu', key: 'mediu_ore', width: 15 },
                 { header: 'Near miss', key: 'near_miss', width: 15 },
+                { header: 'Toolbox', key: 'toolbox', width: 15 },
                 { header: 'Ment. corectivă', key: 'mentenanta_corectiva', width: 20 },
                 { header: 'Ment. preventivă', key: 'mentenanta_preventiva', width: 20 }
             ];
