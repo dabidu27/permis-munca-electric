@@ -154,61 +154,73 @@ export const invite = async(req: Request, res: Response) => {
         const safeUsername = escapeHtml(cleanUsername);
 
         const url = `${appUrl}/signup/${token}`
-        const {error} = await resend.emails.send({
-        from: 'Permis Electric Munca <ssm@razvanchiru.ro>',
-        to: [cleanEmail],
-        subject: 'Permis Electric Munca invitatie',
-        html: `
-            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;background:#F4F5F7;padding:24px">
-            <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
-                
-                <div style="background:linear-gradient(135deg,#1E293B,#334155);padding:28px 30px">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                    <td>
-                        <h1 style="color:#fff;margin:0;font-size:18px;font-weight:600;letter-spacing:0.3px">Permis electric de munca</h1>
-                    </td>
-                    </tr>
-                </table>
-                </div>
 
-                <div style="padding:32px 30px">
-                <p style="font-size:15px;color:#1E293B;margin:0 0 20px">Buna ziua, <strong>${safeUsername}</strong>!</p>
+        let sendError: unknown = null;
+        try{
+            const {error} = await resend.emails.send({
+            from: 'Permis Electric Munca <ssm@razvanchiru.ro>',
+            to: [cleanEmail],
+            subject: 'Permis Electric Munca invitatie',
+            html: `
+                <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;background:#F4F5F7;padding:24px">
+                <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+                    
+                    <div style="background:linear-gradient(135deg,#1E293B,#334155);padding:28px 30px">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td>
+                            <h1 style="color:#fff;margin:0;font-size:18px;font-weight:600;letter-spacing:0.3px">Permis electric de munca</h1>
+                        </td>
+                        </tr>
+                    </table>
+                    </div>
 
-                <div style="display:flex;align-items:center;gap:10px;background:#ECFDF5;border-left:4px solid #10B981;border-radius:6px;padding:14px 16px;margin-bottom:20px">
-                    <p style="color:#047857;margin:0;font-size:14px">
-                    Ati fost adaugat in platforma Permis Electric Munca.
+                    <div style="padding:32px 30px">
+                    <p style="font-size:15px;color:#1E293B;margin:0 0 20px">Buna ziua, <strong>${safeUsername}</strong>!</p>
+
+                    <div style="display:flex;align-items:center;gap:10px;background:#ECFDF5;border-left:4px solid #10B981;border-radius:6px;padding:14px 16px;margin-bottom:20px">
+                        <p style="color:#047857;margin:0;font-size:14px">
+                        Ati fost adaugat in platforma Permis Electric Munca.
+                        </p>
+                    </div>
+
+                    <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 24px">
+                        Pentru a finaliza crearea contului, va rugam sa va setati parola contului, accesand link-ul de mai jos.
                     </p>
+
+
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td align="center">
+                            <a href="${url}" style="background:#1E293B;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block">
+                            Setare parola
+                            </a>
+                        </td>
+                        </tr>
+                    </table>
+                    </div>
+
+                    <div style="background:#F8FAFC;padding:16px 30px;border-top:1px solid #E2E8F0">
+                    <p style="color:#94A3B8;font-size:11px;text-align:center;margin:0">Permis Electric Munca — Chiru & Asociatii</p>
+                    </div>
                 </div>
-
-                <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 24px">
-                    Pentru a finaliza crearea contului, va rugam sa va setati parola contului, accesand link-ul de mai jos.
-                </p>
-
-
-                <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                    <td align="center">
-                        <a href="${url}" style="background:#1E293B;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block">
-                        Setare parola
-                        </a>
-                    </td>
-                    </tr>
-                </table>
                 </div>
+            `
+            })
 
-                <div style="background:#F8FAFC;padding:16px 30px;border-top:1px solid #E2E8F0">
-                <p style="color:#94A3B8;font-size:11px;text-align:center;margin:0">Permis Electric Munca — Chiru & Asociatii</p>
-                </div>
-            </div>
-            </div>
-        `
-        })
+            if(error)
+                sendError = error
 
-        if (error) {
-            //clean up if email sending failed, to be ready for another try
-            await supabase.from('users').delete().eq('id', user.id);
-            throw new Error(`Resend email failed: ${error.message}`);
+        }catch(err){ //catch any network failure
+            sendError = err
+        }
+
+        if (sendError) {
+            //clean up if email sending failed (resend error or network failure) to be ready for another try
+            const {error: deleteError} = await supabase.from('users').delete().eq('id', user.id);
+            if (deleteError)
+               console.error('Invite cleanup failed for user', user.id, deleteError);
+            throw new Error(`Resend email failed: ${String(sendError)}`);
         }
         
         return res.status(200).json({success: true, message: 'Invitatia a fost trimisa cu success'})
@@ -222,8 +234,7 @@ export const invite = async(req: Request, res: Response) => {
 
 export const signup = async(req: Request, res: Response) => {
 
-    const token = req.params.token as string ?? '';
-    const {password} = req.body;
+    const {password, token} = req.body;
 
     if(typeof password !== 'string' || password.length < 8)
         return res.status(400).json({error: 'Invalid credentials'})
