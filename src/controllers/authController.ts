@@ -211,7 +211,7 @@ export const invite = async(req: Request, res: Response) => {
             if(error)
                 sendError = error
 
-        }catch(err){ //catch any network failure
+        }catch(err){ //catch any network failure for clean up
             sendError = err
         }
 

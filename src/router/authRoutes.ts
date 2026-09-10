@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/login', login)
 router.post('/logout', getCurrentUser, logout);
-router.post('/signup/:token', signup);
+router.post('/signup', signup);
 router.get('/me', getCurrentUser, me);
 router.post('/invite', getCurrentUser, invite);
 
