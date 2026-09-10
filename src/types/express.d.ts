@@ -5,7 +5,7 @@ declare global {
     namespace Express {
         interface Request {
             user: string;
-            admin: boolean,
+            role: 'superuser' | 'admin' | 'user',
             jwtId: string;
             exp: number
         }

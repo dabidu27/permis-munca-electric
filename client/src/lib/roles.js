@@ -16,7 +16,7 @@ export const USER_HOME = '/pagina-rapoarte'
 const USER_PATHS = [USER_HOME, '/raport-zilnic']
 
 /** Unde aterizează fiecare rol după autentificare. */
-export const homePath = (admin) => (admin ? ADMIN_HOME : USER_HOME)
+export const homePath = (role) => (role === 'superuser' || role === 'admin' ? ADMIN_HOME : USER_HOME)
 
 /** Adminii ajung peste tot; ceilalți doar pe rutele din `USER_PATHS`. */
-export const canVisit = (admin, pathname) => Boolean(admin) || USER_PATHS.includes(pathname)
+export const canVisit = (role, pathname) => role === 'superuser' || role === 'admin' || USER_PATHS.includes(pathname)
