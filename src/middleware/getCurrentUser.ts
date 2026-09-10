@@ -5,7 +5,7 @@ import { redis } from '../lib/redisClient.js'
 
 interface AppJwtPayload extends jwt.JwtPayload {
   userId: string;
-  admin: boolean;
+  role: string;
   jwtId: string;
 }
 
@@ -36,6 +36,10 @@ export const getCurrentUser = async(req: Request, res: Response, next: NextFunct
 
     if(!payload.userId || !payload.jwtId)
         return res.status(401).json({'error': 'Could not validate credentials'});
+
+    if(payload.role !== 'superuser' && payload.role !== 'admin' && payload.role !== 'user')
+        return res.status(401).json({'error': 'Could not validate credentials'});
+
     
     //check if the token is blacklisted => logged out
     const isBlacklisted = await redis.get(`bl_${payload.jwtId}`);
@@ -44,7 +48,7 @@ export const getCurrentUser = async(req: Request, res: Response, next: NextFunct
     }
 
     req.user = payload.userId;
-    req.admin = payload.admin;
+    req.role = payload.role as 'superuser' | 'admin' | 'user';
     req.jwtId = payload.jwtId;
     req.exp = payload.exp as number;
 

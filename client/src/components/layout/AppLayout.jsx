@@ -7,7 +7,7 @@ import Wordmark from '../brand/Wordmark.jsx'
 import { canVisit, USER_HOME } from '../../lib/roles.js'
 import { useEffect, useState } from 'react'
 
-const EMPTY = { id: '', email: '', username: '', admin: false }
+const EMPTY = { id: '', email: '', username: '', role: 'user' }
 
 export default function AppLayout() {
 
@@ -65,7 +65,7 @@ export default function AppLayout() {
 
   const profile = {
     ...user,
-    admin: Boolean(user?.admin),
+    role: user?.role,
     nume,
     prenume,
     numeAfisat,
@@ -85,7 +85,7 @@ export default function AppLayout() {
   // Rolul se citește din /auth/me, deci poarta stă aici, nu în LoginPage: prinde
   // la fel autentificarea, un URL deschis direct, un refresh sau butonul Back.
   // `replace` ține ruta interzisă în afara istoricului, ca și redirectul de login.
-  if (!canVisit(profile.admin, location.pathname)) {
+  if (!canVisit(profile.role, location.pathname)) {
     return <Navigate to={USER_HOME} replace />
   }
 

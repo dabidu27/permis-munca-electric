@@ -18,9 +18,14 @@
   /* Status ------------------------------------------------------------ */
   --color-warn: oklch(0.72 0.17 88);
   --color-warn-text: #8a6a13;
+
   --color-danger: oklch(0.55 0.18 27);
   --color-danger-bg: #fdf2f2;
   --color-danger-text: #8c2a24;
+  
+  --color-success: oklch(0.55 0.15 145);
+  --color-success-bg: #ecfdf5;
+  --color-success-text: #166534;
 
   /* Ink (text) -------------------------------------------------------- */
   --color-ink: #171a1d;
