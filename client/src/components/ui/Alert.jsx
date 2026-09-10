@@ -2,6 +2,7 @@ const tones = {
   error: 'border-danger bg-danger-bg text-danger-text',
   info: 'border-brand bg-info-bg text-[#3a4652]',
   warn: 'border-warn bg-[#fdf9ef] text-warn-text',
+  success: 'border-success bg-success-bg text-success-text',
 }
 
 /** Left-rule callout used for form errors and the validity notice. */

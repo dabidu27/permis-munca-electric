@@ -239,6 +239,10 @@ export const signup = async(req: Request, res: Response) => {
     if(typeof password !== 'string' || password.length < 8)
         return res.status(400).json({error: 'Invalid credentials'})
 
+    if (typeof token !== 'string' || token.length === 0) {
+        return res.status(400).json({ error: 'Invalid invitation token' });
+    }
+
     try{
         //find the user with that token
         const hashedToken = await crypto.hash('sha256', token)
@@ -280,7 +284,7 @@ export const signup = async(req: Request, res: Response) => {
             });
         }
 
-        return res.status(200).json({success: true});
+        return res.status(200).json({success: true, message: 'Contul a fost creat. Te poți autentifica.'});
 
     }catch(err: any){
         console.error('Catch block error:', err.message);

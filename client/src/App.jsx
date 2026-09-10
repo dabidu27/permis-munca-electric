@@ -10,6 +10,8 @@ import EsgReportPage from './pages/ESGReportPage.jsx'
 import DailyReportForm from './pages/RaportOnSite.jsx'
 import SiteReportsPage from './pages/SiteReportsPage.jsx'
 import AdminSiteReportsPage from './pages/AdminSiteReportsPage.jsx'
+import CreateNewAccount from './pages/CreateNewAccount.jsx'
+import SignupPage from './pages/SingupPage.jsx'
 
 /**
  * No AnimatePresence here on purpose. Keying <Routes> by pathname remounts the
@@ -22,6 +24,7 @@ export default function App() {
     <Routes>
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup/:token" element={<SignupPage />} /> 
       </Route>
 
       <Route element={<AppLayout />}>
@@ -32,6 +35,7 @@ export default function App() {
         <Route path="/pagina-rapoarte" element={<SiteReportsPage />} />
         {/* Doar pentru admini — AppLayout întoarce non-adminii pe USER_HOME. */}
         <Route path="/rapoarte-on-site" element={<AdminSiteReportsPage />} />
+        <Route path='/cont-nou' element = {<CreateNewAccount />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
